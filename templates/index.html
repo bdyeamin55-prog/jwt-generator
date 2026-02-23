@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAHIR JWT TOKEN Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #555;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .token-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .copy-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .token-info {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #c00;
+        }
+        
+        .history-section {
+            margin-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 20px;
+        }
+        
+        .history-title {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .history-item {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-uid {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .history-status {
+            color: #28a745;
+            font-size: 12px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+        }
+        
+        .credit {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 MAHIR JWT TOKEN Generator</h1>
+            <p>Generate JWT Token for Free Fire</p>
+        </div>
+        
+        <div class="content">
+            <form id="tokenForm" method="POST" action="/token">
+                <div class="input-group">
+                    <label for="uid">📱 UID</label>
+                    <input type="text" id="uid" name="uid" placeholder="Enter your UID" value="{{ uid or '' }}" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">🔑 PASSWORD</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" value="{{ password or '' }}" required>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" id="generateBtn">🚀 GENERATE TOKEN</button>
+                    <button type="button" class="btn btn-secondary" id="clearBtn">🗑️ CLEAR</button>
+                </div>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #666;">Generating token...</p>
+            </div>
+            
+            {% if error %}
+            <div class="error">
+                ❌ {{ error }}
+            </div>
+            {% endif %}
+            
+            {% if success and token_data %}
+            <div class="result">
+                <h3>
+                    <span>✅ Generated JWT Token</span>
+                    <button class="copy-btn" onclick="copyToken()">Copy</button>
+                </h3>
+                <div class="token-box" id="tokenText">
+                    {{ token_data.token }}
+                </div>
+                
+                <div class="token-info">
+                    <div class="info-item">
+                        <div class="info-label">API</div>
+                        <div class="info-value">{{ token_data.api }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Region</div>
+                        <div class="info-value">{{ token_data.region }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value">{{ token_data.status }}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: center; color: #666;">
+                    <p>{{ token_data.credit }}</p>
+                    <p>{{ token_data.join }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="history-section">
+                <h3 class="history-title">📜 RECENT HISTORY</h3>
+                <div id="historyList">
+                    <!-- History items will be loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Made with ❤️ by <span class="credit">YASIR XT</span></p>
+            <p style="font-size: 12px; margin-top: 5px;">Join Discord: YASIR XT CHEAT!!</p>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('tokenForm').addEventListener('submit', function(e) {
+            document.getElementById('loading').classList.add('active');
+        });
+        
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('uid').value = '';
+            document.getElementById('password').value = '';
+            
+            // Remove result if exists
+            const result = document.querySelector('.result');
+            if (result) {
+                result.remove();
+            }
+            
+            // Remove error if exists
+            const error = document.querySelector('.error');
+            if (error) {
+                error.remove();
+            }
+        });
+        
+        function copyToken() {
+            const tokenText = document.getElementById('tokenText').innerText;
+            navigator.clipboard.writeText(tokenText).then(function() {
+                alert('Token copied to clipboard!');
+            }, function() {
+                alert('Failed to copy token');
+            });
+        }
+        
+        // Load history
+        fetch('/history-data')
+            .then(response => response.json())
+            .then(data => {
+                const historyList = document.getElementById('historyList');
+                if (data.history && data.history.length > 0) {
+                    data.history.forEach(item => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+                        historyItem.innerHTML = `
+                            <span class="history-uid">UID: ${item.uid}</span>
+                            <span class="history-status">${item.status}</span>
+                            <span style="font-size: 12px; color: #999;">${item.time}</span>
+                        `;
+                        historyList.appendChild(historyItem);
+                    });
+                } else {
+                    historyList.innerHTML = '<p style="text-align: center; color: #999;">No history available</p>';
+                }
+            });
+    </script>
+</body>
+</html>
