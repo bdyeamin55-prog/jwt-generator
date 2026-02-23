@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAHIR JWT TOKEN Generator</title>
-    <link rel="stylesheet" href="/static/style.css">
     <style>
         * {
             margin: 0;
@@ -16,15 +15,12 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
         
         .container {
-            max-width: 800px;
-            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -41,18 +37,57 @@
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
         }
         
         .content {
             padding: 30px;
         }
         
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #667eea;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #667eea;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Single Token Section */
         .input-group {
             margin-bottom: 20px;
         }
@@ -70,13 +105,11 @@
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 16px;
-            transition: all 0.3s;
         }
         
         input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
         
         .button-group {
@@ -86,8 +119,7 @@
         }
         
         .btn {
-            flex: 1;
-            padding: 15px;
+            padding: 15px 25px;
             border: none;
             border-radius: 10px;
             font-size: 16px;
@@ -99,12 +131,491 @@
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            flex: 1;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102,126,234,0.3);
         }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #555;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        /* Batch Upload Section */
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            background: #e8eaf6;
+            border-color: #5a6fd8;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .file-info.active {
+            display: block;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .progress-container.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+        
+        /* Download Section */
+        .download-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+        
+        .download-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .download-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .download-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Result Section */
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .token-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .token-info {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+        }
+        
+        .credit {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 MAHIR JWT TOKEN Generator</h1>
+            <p>Generate JWT Tokens for Free Fire</p>
+        </div>
+        
+        <div class="content">
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('single')">🎯 Single Token</button>
+                <button class="tab-btn" onclick="switchTab('batch')">📦 Batch Process</button>
+            </div>
+            
+            <!-- Single Token Tab -->
+            <div id="single-tab" class="tab-content active">
+                <form id="tokenForm" method="POST" action="/token">
+                    <div class="input-group">
+                        <label for="uid">📱 UID</label>
+                        <input type="text" id="uid" name="uid" placeholder="Enter your UID" value="{{ uid or '' }}" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">🔑 PASSWORD</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" value="{{ password or '' }}" required>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">🚀 GENERATE TOKEN</button>
+                        <button type="button" class="btn btn-secondary" id="clearBtn">🗑️ CLEAR</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Batch Process Tab -->
+            <div id="batch-tab" class="tab-content">
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Click to upload JSON file</div>
+                    <div class="upload-hint">Format: [{"uid": "123", "password": "pass"}, ...]</div>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleFileSelect(this)">
+                </div>
+                
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <a href="/download-sample-batch" class="btn btn-secondary" style="display: inline-block; padding: 8px 15px;">📥 Download Sample</a>
+                </div>
+                
+                <!-- File Info -->
+                <div id="fileInfo" class="file-info">
+                    <strong>Selected File:</strong> <span id="fileName"></span><br>
+                    <strong>Total Accounts:</strong> <span id="totalAccounts"></span>
+                    <button onclick="startBatchProcess()" class="btn btn-success" style="margin-top: 10px; width: 100%;">🚀 Start Batch Processing</button>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div id="progressContainer" class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Processing: 0/0</div>
+                    <div id="currentUid" style="text-align: center; margin-top: 5px; color: #666; font-size: 14px;"></div>
+                </div>
+                
+                <!-- Batch Results -->
+                <div id="batchResult" class="result" style="display: none;">
+                    <h3>✅ Batch Processing Complete!</h3>
+                    <p id="batchSummary"></p>
+                    <button id="downloadBatchResult" class="btn btn-success" style="width: 100%;">📥 Download Results</button>
+                </div>
+            </div>
+            
+            <!-- Download Section (Common for both tabs) -->
+            <div class="download-section">
+                <div class="download-title">📥 ডাউনলোড JSON ফাইল (token_bd.json ফরম্যাট)</div>
+                <div class="download-buttons">
+                    <a href="/download-jwt-json" class="download-btn">
+                        <span>📄</span>
+                        <span>JWT Tokens JSON</span>
+                    </a>
+                </div>
+                <div class="file-info" style="margin-top: 10px;">
+                    <span>📁 ফাইল: jwt_tokens_bd.json | UID এবং JWT Token থাকবে</span>
+                </div>
+            </div>
+            
+            <!-- Error Display -->
+            {% if error %}
+            <div class="error">
+                ❌ {{ error }}
+            </div>
+            {% endif %}
+            
+            <!-- Token Result -->
+            {% if success and token_data %}
+            <div class="result">
+                <h3>
+                    <span>✅ Generated JWT Token</span>
+                    <button class="copy-btn" onclick="copyToken()">Copy</button>
+                </h3>
+                <div class="token-box" id="tokenText">
+                    {{ token_data.token }}
+                </div>
+                
+                <div class="token-info">
+                    <div class="info-item">
+                        <div class="info-label">API</div>
+                        <div class="info-value">{{ token_data.api }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Region</div>
+                        <div class="info-value">{{ token_data.region }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value">{{ token_data.status }}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: center; color: #666;">
+                    <p>{{ token_data.credit }}</p>
+                    <p>{{ token_data.join }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="footer">
+            <p>Made with ❤️ by <span class="credit">YASIR XT</span></p>
+            <p style="font-size: 12px; margin-top: 5px;">Join Discord: YASIR XT CHEAT!!</p>
+        </div>
+    </div>
+    
+    <script>
+        let currentTaskId = null;
+        let progressInterval = null;
+        let selectedFile = null;
+        
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'single') {
+                document.querySelector('.tab-btn').classList.add('active');
+                document.getElementById('single-tab').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('batch-tab').classList.add('active');
+            }
+        }
+        
+        // Clear button
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('uid').value = '';
+            document.getElementById('password').value = '';
+        });
+        
+        // Copy token
+        function copyToken() {
+            const tokenText = document.getElementById('tokenText').innerText;
+            navigator.clipboard.writeText(tokenText).then(function() {
+                alert('Token copied to clipboard!');
+            });
+        }
+        
+        // File handling
+        function handleFileSelect(input) {
+            selectedFile = input.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const accounts = JSON.parse(e.target.result);
+                        document.getElementById('fileName').textContent = selectedFile.name;
+                        document.getElementById('totalAccounts').textContent = accounts.length;
+                        document.getElementById('fileInfo').classList.add('active');
+                    } catch (error) {
+                        alert('Invalid JSON file!');
+                    }
+                };
+                reader.readAsText(selectedFile);
+            }
+        }
+        
+        // Start batch processing
+        function startBatchProcess() {
+            if (!selectedFile) return;
+            
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            
+            // Show progress
+            document.getElementById('progressContainer').classList.add('active');
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = 'Uploading...';
+            
+            fetch('/upload-batch', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentTaskId = data.task_id;
+                    startProgressTracking(currentTaskId);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Upload failed: ' + error);
+            });
+        }
+        
+        // Track progress
+        function startProgressTracking(taskId) {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+            }
+            
+            progressInterval = setInterval(() => {
+                fetch(`/batch-progress/${taskId}`)
+                .then(response => response.json())
+                .then(progress => {
+                    if (progress.status === 'processing') {
+                        const percent = (progress.current / progress.total) * 100;
+                        document.getElementById('progressFill').style.width = percent + '%';
+                        document.getElementById('progressText').textContent = 
+                            `Processing: ${progress.current}/${progress.total}`;
+                        document.getElementById('currentUid').textContent = 
+                            `Current UID: ${progress.current_uid}`;
+                    } else if (progress.status === 'completed') {
+                        clearInterval(progressInterval);
+                        document.getElementById('progressFill').style.width = '100%';
+                        document.getElementById('progressText').textContent = 
+                            `Completed! Processing finished.`;
+                        document.getElementById('currentUid').textContent = '';
+                        
+                        // Show download button
+                        document.getElementById('batchResult').style.display = 'block';
+                        document.getElementById('downloadBatchResult').onclick = function() {
+                            window.location.href = `/batch-result/${taskId}`;
+                        };
+                        
+                        // Fetch summary
+                        fetch(`/batch-result/${taskId}/summary`)
+                            .then(r => r.json())
+                            .then(summary => {
+                                document.getElementById('batchSummary').textContent = 
+                                    `Success: ${summary.success}, Failed: ${summary.failed}`;
+                            });
+                    } else if (progress.status === 'error') {
+                        clearInterval(progressInterval);
+                        alert('Error: ' + progress.error);
+                    }
+                });
+            }, 1000);
+        }
+    </script>
+</body>
+</html>        }
         
         .btn-secondary {
             background: #f0f0f0;
